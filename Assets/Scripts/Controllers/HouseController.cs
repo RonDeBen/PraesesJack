@@ -7,29 +7,29 @@ public class HouseController : MonoBehaviour
     public DeckController deckCont;
     public PlayerController playerCont;
     public TextController textCont;
+    public BettingController betCont;
     public Vector3 houseStartPos, offset;
     // private List<CardModel> houseHand = new List<CardModel>();
     private HandModel houseHand = new HandModel();
 
     public void Deal(){
         houseHand.Clear();
-        DealToPlayer(0);
+        DealToPlayer(0, false);
         DealToHouse(false);
-        DealToPlayer(0);
+        DealToPlayer(0, false);
         DealToHouse(true);
     }
 
     public void DealToHouse(bool shouldConceal){
         CardModel newCard = deckCont.GetNextCard(shouldConceal);
-        houseHand.Add(newCard, houseStartPos, offset);
-        newCard.transform.position = houseStartPos + (houseHand.Count() * offset);
+        houseHand.Add(newCard, houseStartPos, offset, false);
     }
 
-    public void DealToPlayer(int hand){
-        playerCont.ReceiveCard(deckCont.GetNextCard(false), hand);
+    public void DealToPlayer(int hand, bool isDoubleDown){
+        playerCont.ReceiveCard(deckCont.GetNextCard(false), hand, isDoubleDown);
     }
 
-    public void DealersTurn(){
+    public void DealersTurn(bool isDoubleDown){
         houseHand.FlipHouseCard();
         houseHand.CalculateValues();
         while(houseHand.HighestValue() < 17){
@@ -38,8 +38,9 @@ public class HouseController : MonoBehaviour
         }
         if(houseHand.LowestValue() > 21){
             textCont.SetOutcomeText("House busted, player wins");
+            betCont.WinBet(false, isDoubleDown);
         }else{
-            playerCont.DetermineWinner();
+            playerCont.DetermineWinner(isDoubleDown);
         }
     }
 

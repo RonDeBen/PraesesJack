@@ -16,10 +16,13 @@ public class HandModel : MonoBehaviour
         return cards.Count;
     }
 
-    public void Add(CardModel newCard, Vector3 startPos, Vector3 offset){
+    public void Add(CardModel newCard, Vector3 startPos, Vector3 offset, bool isDoubleDown){
         cards.Add(newCard);
         newCard.SetOrder(cards.Count);
-        newCard.transform.position = startPos + (cards.Count * offset);
+        newCard.transform.position = startPos + ((cards.Count - 1) * offset);
+        if (isDoubleDown) {
+            newCard.transform.Rotate(0f, 0f, 90f);
+        }
         CalculateValues();
     }
 

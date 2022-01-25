@@ -21,6 +21,7 @@ public static class Mathy {
         return (b - a) * t + a;
     }
 
+    //Fisher-Yates shuffle
     public static void Shuffle<T>(this IList<T> list) {
         var rand = new System.Random(System.DateTime.Now.Millisecond);
         int n = list.Count;

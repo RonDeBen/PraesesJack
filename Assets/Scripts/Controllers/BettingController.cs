@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BettingController : MonoBehaviour
 {
     public TextController textCont;
     public PlayerController playerCont;
+    public Button oneBtn, fiveBtn, twentyFiveBtn, oneHundredBtn;
     public int balance = 1000;
     public int bet = 5;
 
@@ -45,20 +47,35 @@ public class BettingController : MonoBehaviour
         }
     }
 
-    public void LoseBet(bool hasInsurance){
-        balance -= (hasInsurance) ? (int)(bet / 2) : bet;
+    public void LoseBet(bool hasInsurance, bool isDoubleDown){
+        int tempBet = (isDoubleDown) ? bet * 2 : bet;
+        balance -= (hasInsurance) ? (int)(tempBet / 2) : tempBet;
         textCont.SetBalanceText(balance);
-        if(balance <= bet){
-            bet = balance;
-            textCont.SetBetText(bet);
+        if(balance <= tempBet){
+            tempBet = balance;
+            textCont.SetBetText(tempBet);
         }
-        if(bet == 0){
+        if(tempBet == 0){
             playerCont.SetCanBetButton(false);
         }
+        SetBetButtons(true);
     }
 
-    public void WinBet(bool gotABlackjack){
-        balance += (gotABlackjack) ? (int)(bet * 1.5) : bet;
+    public void WinBet(bool gotABlackjack, bool isDoubleDown){
+        int tempBet = (isDoubleDown) ? bet * 2 : bet;
+        balance += (gotABlackjack) ? (int)(tempBet * 1.5) : tempBet;
         textCont.SetBalanceText(balance);
+        SetBetButtons(true);
+    }
+
+    public bool CanAffordToDoubleDown(){
+        return ((bet * 2) < balance);
+    }
+
+    public void SetBetButtons(bool truth){
+        oneBtn.interactable = truth;
+        fiveBtn.interactable = truth;
+        twentyFiveBtn.interactable = truth;
+        oneHundredBtn.interactable = truth;
     }
 }
