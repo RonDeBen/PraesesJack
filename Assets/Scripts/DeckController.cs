@@ -8,9 +8,9 @@ public class DeckController : MonoBehaviour
     public Sprite[] heartSprites, clubSprites, diamondSprites, spadeSprites;
     public GameObject cardPrefab;
     public int shoeSize = 3;
-    private int index = 10;
     private Stack<int> deckInts;
     public float muPercent, sigmaPercent;
+    private 
     
     // Start is called before the first frame update
     void Start(){
@@ -23,13 +23,12 @@ public class DeckController : MonoBehaviour
     }
 
     void ChangeCard(CardModel card, int cardNum){
-        index  = (index + 1) % 52;
-        int cardIndex = index % 13; 
-        if (index < 13){//0 -> 12
+        int cardIndex = cardNum % 13; 
+        if (cardNum < 13){//0 -> 12
             card.SetCard(heartSprites[cardIndex], NumToVal(cardIndex));
-        }else if(index < 26){//13 -> 25
+        }else if(cardNum < 26){//13 -> 25
             card.SetCard(clubSprites[cardIndex], NumToVal(cardIndex));
-        }else if(index < 39){//26 -> 38
+        }else if(cardNum < 39){//26 -> 38
             card.SetCard(diamondSprites[cardIndex], NumToVal(cardIndex));
         }else{//39 -> 51
             card.SetCard(spadeSprites[cardIndex], NumToVal(cardIndex));
@@ -43,6 +42,8 @@ public class DeckController : MonoBehaviour
                 tempList.Add(k);
             }
         }
+        Mathy.Shuffle(tempList);
+
         //inserts a "card" in the deck that triggers a shuffle
         //ex muPercent = .75, sigmaPercent = .06 
         //most shuffles will happen 3/4 of the way into the deck
@@ -51,8 +52,7 @@ public class DeckController : MonoBehaviour
         int shuffleIndex = (int)((shoeSize * 52) * percentPenetration);
         tempList.Insert(shuffleIndex, -1);//flag at that position
 
-        var rand = new System.Random();
-        deckInts = new Stack<int>(tempList.OrderBy(item => rand.Next()));
+        deckInts = new Stack<int>(tempList);
     }
 
     private int NumToVal(int num){
@@ -69,7 +69,6 @@ public class DeckController : MonoBehaviour
         CardModel newCard = go.GetComponent<CardModel>(); 
         int cardNum = deckInts.Pop();
         if(cardNum == -1){
-            Debug.Log("shuffle");
             ShuffleDeck();
             cardNum = deckInts.Pop();
         }
