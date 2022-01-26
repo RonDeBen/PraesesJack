@@ -25,13 +25,13 @@ public class DeckController : MonoBehaviour
     void ChangeCard(CardModel card, int cardNum){
         int cardIndex = cardNum % 13; 
         if (cardNum < 13){//0 -> 12
-            card.SetCard(heartSprites[cardIndex], NumToVal(cardIndex));
+            card.SetCard(heartSprites[cardIndex], cardIndex);
         }else if(cardNum < 26){//13 -> 25
-            card.SetCard(clubSprites[cardIndex], NumToVal(cardIndex));
+            card.SetCard(clubSprites[cardIndex], cardIndex);
         }else if(cardNum < 39){//26 -> 38
-            card.SetCard(diamondSprites[cardIndex], NumToVal(cardIndex));
+            card.SetCard(diamondSprites[cardIndex], cardIndex);
         }else{//39 -> 51
-            card.SetCard(spadeSprites[cardIndex], NumToVal(cardIndex));
+            card.SetCard(spadeSprites[cardIndex], cardIndex);
         }
     }
 
@@ -53,15 +53,6 @@ public class DeckController : MonoBehaviour
         tempList.Insert(shuffleIndex, -1);//flag at that position
 
         deckInts = new Stack<int>(tempList);
-    }
-
-    private int NumToVal(int num){
-        if(num < 9){//0 -> 8 are 2 -> 10
-            return num + 2;
-        }else if(num < 12){//a face card
-            return 10;
-        }
-        return -1;//ace is a flag
     }
 
     public CardModel GetNextCard(bool shouldConceal){

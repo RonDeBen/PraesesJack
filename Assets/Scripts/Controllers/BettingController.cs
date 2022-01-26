@@ -102,10 +102,10 @@ public class BettingController : MonoBehaviour
         if(isInsuring){
             if(houseHitABlackjack){
                 balance += insuranceBet * 2;
-                textCont.ConcatOutcomeText(" & Won Insurance Bet");
+                textCont.ConcatOutcomeText("Won Insurance Bet");
             }else{
                 balance -= insuranceBet;
-                textCont.ConcatOutcomeText(" & Lost Insurance Bet");
+                textCont.ConcatOutcomeText("Lost Insurance Bet");
             }
         }
         isInsuring = false;

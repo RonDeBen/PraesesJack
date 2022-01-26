@@ -6,6 +6,8 @@ TagManager:
   tags:
   - HitMe
   - DoubleDown
+  - Insurance
+  - Split
   layers:
   - Default
   - TransparentFX

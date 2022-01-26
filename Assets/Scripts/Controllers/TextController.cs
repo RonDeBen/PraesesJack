@@ -41,6 +41,9 @@ public class TextController : MonoBehaviour
     }
 
     public void ConcatOutcomeText(string newText){
+        if(outcomeTxt.text != ""){
+            outcomeTxt.text += " & ";
+        }
         outcomeTxt.text = outcomeTxt.text + newText;
     }
 }

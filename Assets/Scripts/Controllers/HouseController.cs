@@ -33,8 +33,8 @@ public class HouseController : MonoBehaviour
         houseHand.Add(newCard, houseStartPos, offset, false);
     }
 
-    public void DealToPlayer(int hand, bool isDoubleDown){
-        playerCont.ReceiveCard(deckCont.GetNextCard(false), hand, isDoubleDown);
+    public void DealToPlayer(int handIndex, bool isDoubleDown){
+        playerCont.ReceiveCard(deckCont.GetNextCard(false), handIndex, isDoubleDown);
     }
 
     public void DealersTurn(bool isDoubleDown){

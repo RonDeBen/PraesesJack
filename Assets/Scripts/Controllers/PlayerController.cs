@@ -6,22 +6,26 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     private List<HandModel> hands = new List<HandModel>();
-    public Vector3 playerStartPos, offset, doubleDownOffset;
+    public Vector3 playerStartPos, offset, doubleDownOffset, handOffset;
     public HouseController houseCont; 
     public BettingController betCont;
     public TextController textCont;
-    public GameObject hitMePrefab, doubleDownPrefab;
+    public SplitModel splitter;
     public Button clearBtn, betStandBtn;
-    private List<GameObject> hitMeObjs = new List<GameObject>();
-    private List<GameObject> doubleDownObjs = new List<GameObject>();
+    public GameObject doubleDownObj;
+    public List<GameObject> hitMeObjs;
+    private List<Vector3> handPositions = new List<Vector3>();
     private RaycastHit2D hit;
     private Vector2 touchPosWorld2D;
     private bool placedABet = false;
-    private bool isDoublingDown;
+    private bool isDoublingDown = false;
+    private int currentHandIndex = -1;
+    private Vector3 offscreen = new Vector3(100f, 100f, 0f);
 
     void Start(){
         HandModel newHand = new HandModel();
         hands.Add(newHand);
+        handPositions.Add(playerStartPos);
     }
 
     void FixedUpdate(){
@@ -30,34 +34,62 @@ public class PlayerController : MonoBehaviour
             hit = Physics2D.Raycast(touchPosWorld2D, Camera.main.transform.forward);
             if (hit.collider != null) {
                 if(hit.collider.gameObject.tag == "DoubleDown"){
-                    DoubleDownModel dmm = hit.collider.gameObject.GetComponent<DoubleDownModel>();
-                    HitMe(dmm.handIndex, true);
+                    HitMe(0, true);
                 }
                 if(hit.collider.gameObject.tag == "HitMe"){
                     HitMeModel hmm = hit.collider.gameObject.GetComponent<HitMeModel>();
                     HitMe(hmm.handIndex, false);
                 }
                 if(hit.collider.gameObject.tag == "Insurance"){
-                    //do insurance stuff
                     textCont.SetOutcomeText("Insure up to half your bet");
                     SetCanBetButton(false);
                     betCont.SetBetButtons(true);
                     betCont.SetIsInsuring(true);
                 }
+                if(hit.collider.gameObject.tag == "Split"){
+                    Split();
+                }
             }
         }
     }
 
+    public void Split(){
+        //makes two separate hands
+        currentHandIndex = 0;
+        int oldIndex = splitter.handIndex;
+        List<CardModel> cardPair = hands[oldIndex].GetCopyOfPair();
+
+        hands[oldIndex].Clear();
+        ReceiveCard(cardPair[0], oldIndex, false);
+
+        HandModel newHand = new HandModel();
+        hands.Add(newHand);
+        ReceiveCard(cardPair[1], (handPositions.Count - 1), false);
+
+        splitter.gameObject.transform.position = offscreen;
+
+        //if two aces, hit both hands immediately
+        if((cardPair[0].value == -1) && (cardPair[0].value == cardPair[1].value)){
+            houseCont.DealToPlayer(0, false);
+            houseCont.DealToPlayer(1, false);
+            DetermineWinner(false);
+        }
+    }
+
     public void DetermineWinner(bool isDoubleDown){
+        textCont.SetOutcomeText("");
         foreach(HandModel hand in hands){
-            if(hand.HighestValue() == houseCont.HouseValue()){
-                textCont.SetOutcomeText("It's a tie");
+            if(hand.LowestValue() > 21){//checks for a bust, if split
+                betCont.LoseBet(false, isDoubleDown);
+                textCont.ConcatOutcomeText("Player Busted");
+            }else if(hand.HighestValue() == houseCont.HouseValue()){
+                textCont.ConcatOutcomeText("It's a tie");
             }else if(hand.HighestValue() > houseCont.HouseValue()){
-                textCont.SetOutcomeText("Player Wins");
+                textCont.ConcatOutcomeText("Player Wins");
                 betCont.WinBet(false, isDoubleDown);
             }else{
                 betCont.LoseBet(false, isDoubleDown);
-                textCont.SetOutcomeText("Player Loses");
+                textCont.ConcatOutcomeText("Player Loses");
             }
         }
     }
@@ -71,6 +103,7 @@ public class PlayerController : MonoBehaviour
         if(placedABet){//is the stand button
             Stand(false);
         }else{//is the place bet button
+            currentHandIndex = -1;
             placedABet = true;
             betCont.SetBetButtons(false);
             clearBtn.interactable = false;
@@ -82,24 +115,24 @@ public class PlayerController : MonoBehaviour
     }
     
     public void Stand(bool isDoubleDown){
-        houseCont.DealersTurn(isDoubleDown);
-        clearBtn.interactable = true;
-        placedABet = false;
-        textCont.SetBetStandText("PLACE BET");
+        if ((currentHandIndex != -1) && (currentHandIndex < 1)) {
+            GoToNextHand();
+        }else{
+            hitMeObjs[0].transform.position = offscreen;
+            hitMeObjs[1].transform.position = offscreen;
+            houseCont.DealersTurn(isDoubleDown);
+            clearBtn.interactable = true;
+            placedABet = false;
+            textCont.SetBetStandText("PLACE BET");
+        }
     }
 
     public void ReceiveCard(CardModel newCard, int handIndex, bool isDoubleDown){
-        hands[handIndex].Add(newCard, playerStartPos, offset, isDoubleDown); 
-        if(hitMeObjs.Count < hands.Count){
-            GameObject go = Instantiate(hitMePrefab, Vector3.zero, Quaternion.identity);
-            HitMeModel hmm = go.GetComponent<HitMeModel>();
-            hmm.handIndex = handIndex;
-            hitMeObjs.Add(go);
-        }
+        hands[handIndex].Add(newCard, handPositions[handIndex], offset, isDoubleDown); 
         if(!isDoubleDown && CanHit(handIndex)){
-            hitMeObjs[handIndex].transform.position = playerStartPos + (hands[handIndex].Count() * offset);
+            hitMeObjs[handIndex].transform.position = handPositions[handIndex] + (hands[handIndex].Count() * offset);
         }else{
-            hitMeObjs[handIndex].transform.position = new Vector3(100f, 100f, 0f);
+            hitMeObjs[handIndex].transform.position = offscreen;
             if(!HasABust(handIndex) && isDoubleDown){
                 Stand(isDoubleDown);
             }
@@ -113,6 +146,7 @@ public class PlayerController : MonoBehaviour
         hands.Clear();
         HandModel newHand = new HandModel();
         hands.Add(newHand);
+        handPositions = new List<Vector3>{playerStartPos};
     }
 
     public void CheckHand(int handIndex, bool isDoubleDown){
@@ -123,6 +157,15 @@ public class PlayerController : MonoBehaviour
             GotABlackJack(isDoubleDown);
         }
         CheckForDoubleDown(handIndex);
+        if(hands[handIndex].HasAPair() && hands.Count < 2){
+            splitter.SetSprite(hands[handIndex].GetCardSprite(1));
+            splitter.handIndex = handIndex;
+            Vector3 newHandStartPos = handPositions[handIndex] + handOffset;
+            splitter.gameObject.transform.position = newHandStartPos;
+            handPositions.Add(newHandStartPos);
+        }else{
+            splitter.gameObject.transform.position = offscreen; 
+        }
     }
 
     public bool HasABust(int handIndex){
@@ -134,47 +177,59 @@ public class PlayerController : MonoBehaviour
     }
 
     public void CheckForDoubleDown(int handIndex){
-        if (doubleDownObjs.Count < hands.Count) {
-            GameObject go = Instantiate(doubleDownPrefab, Vector3.zero, Quaternion.identity);
-            DoubleDownModel ddm = go.GetComponent<DoubleDownModel>();
-            ddm.handIndex = handIndex;
-            doubleDownObjs.Add(go);
-        }
-        if(CanDoubleDown(handIndex)){  
-            doubleDownObjs[handIndex].transform.position = playerStartPos + doubleDownOffset;
+        if(CanDoubleDown()){  
+            doubleDownObj.transform.position = handPositions[handIndex] + doubleDownOffset;
         }else{
-            doubleDownObjs[handIndex].transform.position = new Vector3(100f, 100f, 0f);
+            doubleDownObj.transform.position = offscreen;
         }
     }
 
-    public bool CanDoubleDown(int handIndex){
-        return (!HasABlackJack(handIndex) && (hands[handIndex].Count() == 2) && betCont.CanAffordToDoubleDown());
+    public bool CanDoubleDown(){
+        bool doesntHaveBlackjack = !HasABlackJack(0);
+        bool isTheTwoStartingCards = ((hands[0].Count() == 2) && (currentHandIndex == -1));
+        bool hasCorrectTotal = hands[0].HasValueToDoubleDown();
+        bool canAffordToDoubleDown = betCont.CanAffordToDoubleDown();
+        return (doesntHaveBlackjack && isTheTwoStartingCards && hasCorrectTotal && canAffordToDoubleDown);
     }
 
     public void GotABlackJack(bool isDoubleDown){
-        FinishedBeforeHouse();
-        houseCont.CheckForStandOff();
-        // betCont.WinBet(true, isDoubleDown);
-        // textCont.SetOutcomeText("You Got a BlackJack!!");
-    }
-
-    public void Busted(bool isDoubleDown){
-        FinishedBeforeHouse();
-        betCont.LoseBet(false, isDoubleDown);
-        textCont.SetOutcomeText("You Busted");
-    }
-
-    public void FinishedBeforeHouse(){
-        clearBtn.interactable = true;
-        placedABet = false;
-        textCont.SetBetStandText("PLACE BET");
-        if(betCont.isInsuring){
-            houseCont.CheckInsuranceBet();
+        if(currentHandIndex == -1){//must use DetermineWinner() on splits
+            FinishedBeforeHouse();
+            houseCont.CheckForStandOff();
         }
     }
 
+    public void Busted(bool isDoubleDown){
+        if(currentHandIndex == -1){//must use DetermineWinner() on splits
+            FinishedBeforeHouse();
+            betCont.LoseBet(false, isDoubleDown);
+            textCont.SetOutcomeText("Player Busted");
+        }
+    }
+
+    public void FinishedBeforeHouse(){
+        if(HasAnotherHandToPlay()){
+            GoToNextHand();
+        }else{
+            clearBtn.interactable = true;
+            placedABet = false;
+            textCont.SetBetStandText("PLACE BET");
+            if (betCont.isInsuring) {
+                houseCont.CheckInsuranceBet();
+            }
+        }
+    }
+
+    public void GoToNextHand(){
+        currentHandIndex++;
+        hitMeObjs[0].transform.position = offscreen;
+        hitMeObjs[currentHandIndex].transform.position = handPositions[currentHandIndex] + (hands[currentHandIndex].Count() * offset);
+    }
+
     private bool CanHit(int handIndex){
-        return (hands[handIndex].LowestValue() < 21);
+        bool hasntBust = (hands[handIndex].LowestValue() < 21);
+        bool isOnCurrentHand = ((currentHandIndex == -1) || (handIndex == currentHandIndex));
+        return (hasntBust && isOnCurrentHand);
     }
 
     public void SetCanBetButton(bool truth){
@@ -183,5 +238,9 @@ public class PlayerController : MonoBehaviour
 
     public bool CanClearBet(){
         return !placedABet;
+    }
+
+    public bool HasAnotherHandToPlay(){
+        return ((currentHandIndex != -1) && (currentHandIndex < 1));
     }
 }

@@ -64,4 +64,24 @@ public class HandModel : MonoBehaviour
     public void FlipHole(){//my favorite function name
         cards[1].SetShouldBeConcealed(false);
     }
+
+    public bool HasAPair(){
+        return ((cards.Count == 2) && (cards[0].denomination == cards[1].denomination));
+    }
+
+    public List<CardModel> GetCopyOfPair(){
+        GameObject firstCardObj = Instantiate(cards[0].gameObject, Vector3.zero, Quaternion.identity);
+        GameObject secondCardObj = Instantiate(cards[1].gameObject, Vector3.zero, Quaternion.identity);
+        CardModel firstCard = firstCardObj.GetComponent<CardModel>();
+        CardModel secondCard = secondCardObj.GetComponent<CardModel>();
+        return new List<CardModel>{firstCard, secondCard};
+    }
+
+    public Sprite GetCardSprite(int cardIndex){
+        return cards[cardIndex].GetFrontSprite();
+    }
+
+    public bool HasValueToDoubleDown(){
+        return ((LowestValue() >= 9) && (LowestValue() <= 11));
+    }
 }

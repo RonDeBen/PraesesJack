@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class HitMeModel : MonoBehaviour
 {
-    [HideInInspector]
+    // [HideInInspector]
     public int handIndex = 0;
 }
