@@ -10,16 +10,13 @@ public class BettingController : MonoBehaviour
     public Button oneBtn, fiveBtn, twentyFiveBtn, oneHundredBtn;
     public int balance = 1000;
     public int bet = 5;
+    public int insuranceBet;
+    [HideInInspector]
+    public bool isInsuring = false;
 
     void Start(){
         textCont.SetBalanceText(balance);
         textCont.SetBetText(bet);
-    }
-
-    public void OnClearPressed(){
-        bet = 0;
-        textCont.SetBetText(bet);
-        playerCont.SetCanBetButton(false);
     }
 
     public void OnOneButtonPressed(){
@@ -28,7 +25,6 @@ public class BettingController : MonoBehaviour
 
     public void OnFiveButtonPressed(){
         AddToBet(5);
-        
     }
 
     public void OnTwentyFiveButtonPressed(){
@@ -39,12 +35,33 @@ public class BettingController : MonoBehaviour
         AddToBet(100);
     }
 
+    public void SetIsInsuring(bool truth){
+        isInsuring = truth;
+    }
+
     public void AddToBet(int num){
-        if((num + bet) < balance){
-            bet += num;
-            textCont.SetBetText(bet);
-            playerCont.SetCanBetButton(true);
+        if(!isInsuring){
+            if(CanAffordBet(num + bet)){
+                bet += num;
+                textCont.SetBetText(bet);
+                playerCont.SetCanBetButton(true);
+            }
+        }else{//is betting for insurance
+            if(CanAffordBet(num + bet + insuranceBet) && ((num + insuranceBet) <= (int)(bet / 2))){//up to half
+                insuranceBet += num;
+                string s = bet + " & " + insuranceBet;
+                textCont.SetBetText(s);
+                playerCont.SetCanBetButton(true);
+            }
         }
+    }
+
+    public bool CanAffordBet(int num){
+        return (num < balance);
+    }
+
+    public bool CanAffordToDoubleDown() {
+        return CanAffordBet(bet * 2);
     }
 
     public void LoseBet(bool hasInsurance, bool isDoubleDown){
@@ -68,14 +85,31 @@ public class BettingController : MonoBehaviour
         SetBetButtons(true);
     }
 
-    public bool CanAffordToDoubleDown(){
-        return ((bet * 2) < balance);
-    }
-
     public void SetBetButtons(bool truth){
         oneBtn.interactable = truth;
         fiveBtn.interactable = truth;
         twentyFiveBtn.interactable = truth;
         oneHundredBtn.interactable = truth;
+    }
+
+    public void OnClearPressed() {
+        bet = 0;
+        textCont.SetBetText(bet);
+        playerCont.SetCanBetButton(false);
+    }
+
+    public void PayOutInsurance(bool houseHitABlackjack){
+        if(isInsuring){
+            if(houseHitABlackjack){
+                balance += insuranceBet * 2;
+                textCont.ConcatOutcomeText(" & Won Insurance Bet");
+            }else{
+                balance -= insuranceBet;
+                textCont.ConcatOutcomeText(" & Lost Insurance Bet");
+            }
+        }
+        isInsuring = false;
+        insuranceBet = 0;
+        textCont.SetBetText(bet);
     }
 }

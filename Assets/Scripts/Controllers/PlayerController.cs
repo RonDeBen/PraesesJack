@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    // private List<CardModel> hand = new List<CardModel>();
     private List<HandModel> hands = new List<HandModel>();
     public Vector3 playerStartPos, offset, doubleDownOffset;
     public HouseController houseCont; 
@@ -25,10 +24,6 @@ public class PlayerController : MonoBehaviour
         hands.Add(newHand);
     }
 
-    // Update is called once per frame
-    void Update(){
-    }
-
     void FixedUpdate(){
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) {
             touchPosWorld2D = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -36,11 +31,18 @@ public class PlayerController : MonoBehaviour
             if (hit.collider != null) {
                 if(hit.collider.gameObject.tag == "DoubleDown"){
                     DoubleDownModel dmm = hit.collider.gameObject.GetComponent<DoubleDownModel>();
-                    DoubleDown(dmm.handIndex);
+                    HitMe(dmm.handIndex, true);
                 }
                 if(hit.collider.gameObject.tag == "HitMe"){
                     HitMeModel hmm = hit.collider.gameObject.GetComponent<HitMeModel>();
-                    HitMe(hmm.handIndex);
+                    HitMe(hmm.handIndex, false);
+                }
+                if(hit.collider.gameObject.tag == "Insurance"){
+                    //do insurance stuff
+                    textCont.SetOutcomeText("Insure up to half your bet");
+                    SetCanBetButton(false);
+                    betCont.SetBetButtons(true);
+                    betCont.SetIsInsuring(true);
                 }
             }
         }
@@ -60,22 +62,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void HitMe(int handIndex){
-        houseCont.DealToPlayer(handIndex, false);
-    }
-
-    public void DoubleDown(int handIndex){
-        houseCont.DealToPlayer(handIndex, true);
+    public void HitMe(int handIndex, bool isDoubleDown){
+        houseCont.DealToPlayer(handIndex, isDoubleDown);
+        CheckHand(handIndex, isDoubleDown);
     }
 
     public void OnBetStandButtonPressed(){
         if(placedABet){//is the stand button
             Stand(false);
         }else{//is the place bet button
+            placedABet = true;
             betCont.SetBetButtons(false);
             clearBtn.interactable = false;
             textCont.SetOutcomeText("");
-            placedABet = true;
             textCont.SetBetStandText("STAND");
             ClearHands();
             houseCont.Deal();
@@ -91,7 +90,6 @@ public class PlayerController : MonoBehaviour
 
     public void ReceiveCard(CardModel newCard, int handIndex, bool isDoubleDown){
         hands[handIndex].Add(newCard, playerStartPos, offset, isDoubleDown); 
-        CheckHand(handIndex, isDoubleDown); 
         if(hitMeObjs.Count < hands.Count){
             GameObject go = Instantiate(hitMePrefab, Vector3.zero, Quaternion.identity);
             HitMeModel hmm = go.GetComponent<HitMeModel>();
@@ -118,8 +116,12 @@ public class PlayerController : MonoBehaviour
     }
 
     public void CheckHand(int handIndex, bool isDoubleDown){
-        CheckForBust(handIndex, isDoubleDown);
-        CheckForBlackJack(handIndex, isDoubleDown);
+        if(HasABust(handIndex)){
+            Busted(isDoubleDown);
+        }
+        if(HasABlackJack(handIndex)){
+            GotABlackJack(isDoubleDown);
+        }
         CheckForDoubleDown(handIndex);
     }
 
@@ -127,20 +129,8 @@ public class PlayerController : MonoBehaviour
         return hands[handIndex].LowestValue() > 21;
     }
 
-    public void CheckForBust(int handIndex, bool isDoubleDown){
-        if(HasABust(handIndex)){
-            Busted(isDoubleDown);
-        }
-    }
-
     public bool HasABlackJack(int handIndex){
         return hands[handIndex].HighestValue() == 21;
-    }
-
-    public void CheckForBlackJack(int handIndex, bool isDoubleDown){
-        if(HasABlackJack(handIndex)){
-            GotABlackJack(isDoubleDown);
-        }
     }
 
     public void CheckForDoubleDown(int handIndex){
@@ -163,8 +153,9 @@ public class PlayerController : MonoBehaviour
 
     public void GotABlackJack(bool isDoubleDown){
         FinishedBeforeHouse();
-        betCont.WinBet(true, isDoubleDown);
-        textCont.SetOutcomeText("You Got a BlackJack!!");
+        houseCont.CheckForStandOff();
+        // betCont.WinBet(true, isDoubleDown);
+        // textCont.SetOutcomeText("You Got a BlackJack!!");
     }
 
     public void Busted(bool isDoubleDown){
@@ -177,6 +168,9 @@ public class PlayerController : MonoBehaviour
         clearBtn.interactable = true;
         placedABet = false;
         textCont.SetBetStandText("PLACE BET");
+        if(betCont.isInsuring){
+            houseCont.CheckInsuranceBet();
+        }
     }
 
     private bool CanHit(int handIndex){

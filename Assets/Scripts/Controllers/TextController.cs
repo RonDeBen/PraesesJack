@@ -28,11 +28,19 @@ public class TextController : MonoBehaviour
         betTxt.text = "Bet: $" + bet.ToString();
     }
 
+    public void SetBetText(string bet){
+        betTxt.text = "Bet: $" + bet;
+    }
+
     public void SetBetStandText(string newText){
         betStandTxt.text = newText;
     }
 
     public void SetOutcomeText(string newText){
         outcomeTxt.text = newText;
+    }
+
+    public void ConcatOutcomeText(string newText){
+        outcomeTxt.text = outcomeTxt.text + newText;
     }
 }

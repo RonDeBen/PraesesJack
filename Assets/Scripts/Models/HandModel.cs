@@ -8,10 +8,6 @@ public class HandModel : MonoBehaviour
     private List<int> values = new List<int>();
     private bool hasAnAce = false;
 
-    public void AddCard(CardModel newCard){
-
-    }
-
     public int Count(){
         return cards.Count;
     }
@@ -33,6 +29,10 @@ public class HandModel : MonoBehaviour
         hasAnAce = false;
         cards.Clear();
         values.Clear();
+    }
+
+    public CardModel GetCard(int cardIndex){
+        return cards[cardIndex];
     }
 
     public List<int> CalculateValues(){
@@ -61,7 +61,7 @@ public class HandModel : MonoBehaviour
         return values[0];
     }
 
-    public void FlipHouseCard(){
+    public void FlipHole(){//my favorite function name
         cards[1].SetShouldBeConcealed(false);
     }
 }
