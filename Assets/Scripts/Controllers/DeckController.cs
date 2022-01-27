@@ -42,7 +42,8 @@ public class DeckController : MonoBehaviour
         //ex muPercent = .75, sigmaPercent = .06 
         //most shuffles will happen 3/4 of the way into the deck
         //99.7% of shuffles will be between 0.57% and 0.93% of the way into the deck
-        float percentPenetration = Mathf.Clamp(muPercent + (sigmaPercent * Mathy.NextGaussianFloat()), 0.5f, 0.95f);
+        //stack is filo, so we subtract the percentage from 1 to get index from the bottom
+        float percentPenetration = 1f - Mathf.Clamp(muPercent + (sigmaPercent * Mathy.NextGaussianFloat()), 0.5f, 0.95f);
         int shuffleIndex = (int)((shoeSize * 52) * percentPenetration);
         tempList.Insert(shuffleIndex, -1);//flag at that position
 

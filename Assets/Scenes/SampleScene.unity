@@ -522,6 +522,32 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 3.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 4.580678
+      objectReference: {fileID: 0}
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1596192073543725833, guid: c0ade4078927f4febbd83f868588f66f,
+        type: 3}
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 0.5686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5772663964631832022, guid: a87928609a02547c69a84bf96be5e1ca,
         type: 3}
       propertyPath: m_RootOrder
@@ -1347,6 +1373,32 @@ PrefabInstance:
     - target: {fileID: 2020924944470567748, guid: a87928609a02547c69a84bf96be5e1ca,
         type: 3}
       propertyPath: handIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 3.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 4.580678
+      objectReference: {fileID: 0}
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1596192073543725833, guid: c0ade4078927f4febbd83f868588f66f,
+        type: 3}
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 0.5686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 3712744570042516491, guid: a87928609a02547c69a84bf96be5e1ca,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5772663964631832022, guid: a87928609a02547c69a84bf96be5e1ca,
