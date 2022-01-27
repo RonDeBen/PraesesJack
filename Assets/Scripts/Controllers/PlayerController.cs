@@ -74,10 +74,6 @@ public class PlayerController : MonoBehaviour
             houseCont.DealToPlayer(0, false);
             houseCont.DealToPlayer(1, false);
             OnBetStandButtonPressed();//press the 'place bet button' for player
-            // houseCont.DealersTurn(false);
-            // DetermineWinner(false);
-            // hitMeObjs[0].transform.position = offscreen;
-            // currentHandIndex = -1;
         }
     }
 
@@ -250,5 +246,9 @@ public class PlayerController : MonoBehaviour
 
     public bool HasAnotherHandToPlay(){
         return ((currentHandIndex != -1) && (currentHandIndex < 1));
+    }
+
+    public void SetStartPosition(Vector3 pos){
+        playerStartPos = pos;
     }
 }

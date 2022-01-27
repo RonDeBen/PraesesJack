@@ -7,18 +7,7 @@ public class TextController : MonoBehaviour
 {
     public TextMeshProUGUI balanceTxt, betTxt, betStandTxt;
     public TextMeshPro outcomeTxt;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public GameObject outcomeObj;
 
     public void SetBalanceText(int balance){
         balanceTxt.text = "Balance: $" + balance.ToString();
@@ -45,5 +34,10 @@ public class TextController : MonoBehaviour
             outcomeTxt.text += " & ";
         }
         outcomeTxt.text = outcomeTxt.text + newText;
+    }
+
+    public void SetOutcomeTextConstraints(Vector3 pos, float width){
+        outcomeObj.transform.position = pos;
+        outcomeObj.GetComponent<RectTransform>().sizeDelta = new Vector2(width, 10f);
     }
 }

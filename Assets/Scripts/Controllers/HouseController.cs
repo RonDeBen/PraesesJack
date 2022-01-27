@@ -70,4 +70,8 @@ public class HouseController : MonoBehaviour
             betCont.WinBet(true, false);
         }
     }
+
+    public void SetStartPosition(Vector3 pos) {
+        houseStartPos = pos;
+    }
 }
