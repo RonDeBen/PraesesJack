@@ -37,19 +37,14 @@ public class HouseController : MonoBehaviour
         playerCont.ReceiveCard(deckCont.GetNextCard(false), handIndex, isDoubleDown);
     }
 
-    public void DealersTurn(bool isDoubleDown){
+    public void DealersTurn(bool isDoubleDown, bool isSplit){
         houseHand.FlipHole();
         houseHand.CalculateValues();
         while(houseHand.HighestValue() < 17){
             DealToHouse(false);
             houseHand.CalculateValues();
         }
-        if(houseHand.LowestValue() > 21){
-            textCont.SetOutcomeText("House busted, player wins");
-            betCont.WinBet(false, isDoubleDown);
-        }else{
-            playerCont.DetermineWinner(isDoubleDown);
-        }
+        playerCont.DetermineWinner(isDoubleDown);
         betCont.PayOutInsurance(HouseValue() == 21);
         insuranceObj.transform.position = new Vector3(100f, 100f, 0f);
     }

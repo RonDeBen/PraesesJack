@@ -73,6 +73,7 @@ public class PlayerController : MonoBehaviour
             houseCont.DealToPlayer(0, false);
             houseCont.DealToPlayer(1, false);
             DetermineWinner(false);
+            hitMeObjs[0].transform.position = offscreen;
         }
     }
 
@@ -82,6 +83,9 @@ public class PlayerController : MonoBehaviour
             if(hand.LowestValue() > 21){//checks for a bust, if split
                 betCont.LoseBet(false, isDoubleDown);
                 textCont.ConcatOutcomeText("Player Busted");
+            }else if(houseCont.HouseValue() > 21){
+                betCont.WinBet(false, isDoubleDown);
+                textCont.SetOutcomeText("House busted, player wins");
             }else if(hand.HighestValue() == houseCont.HouseValue()){
                 textCont.ConcatOutcomeText("It's a tie");
             }else if(hand.HighestValue() > houseCont.HouseValue()){
@@ -120,7 +124,7 @@ public class PlayerController : MonoBehaviour
         }else{
             hitMeObjs[0].transform.position = offscreen;
             hitMeObjs[1].transform.position = offscreen;
-            houseCont.DealersTurn(isDoubleDown);
+            houseCont.DealersTurn(isDoubleDown, (currentHandIndex != -1));
             clearBtn.interactable = true;
             placedABet = false;
             textCont.SetBetStandText("PLACE BET");

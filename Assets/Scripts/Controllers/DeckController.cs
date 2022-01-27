@@ -8,10 +8,8 @@ public class DeckController : MonoBehaviour
     public Sprite[] heartSprites, clubSprites, diamondSprites, spadeSprites;
     public GameObject cardPrefab;
     public int shoeSize = 3;
-    private Stack<int> deckInts;
     public float muPercent, sigmaPercent;
-    private 
-    
+    private Stack<int> deckInts;
     // Start is called before the first frame update
     void Start(){
         ShuffleDeck();
