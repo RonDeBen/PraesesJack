@@ -179,7 +179,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public bool HasABlackJack(int handIndex){
-        return ((hands[handIndex].HighestValue() == 21) && (hands[handIndex].Count == 2));
+        return ((hands[handIndex].HighestValue() == 21) && (hands[handIndex].Count() == 2));
     }
 
     public void CheckForDoubleDown(int handIndex){
