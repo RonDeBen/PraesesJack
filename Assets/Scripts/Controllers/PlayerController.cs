@@ -71,6 +71,7 @@ public class PlayerController : MonoBehaviour
 
         //if two aces, hit both hands immediately
         if((cardPair[0].value == -1) && (cardPair[0].value == cardPair[1].value)){
+            currentHandIndex = -1;
             houseCont.DealToPlayer(0, false);
             houseCont.DealToPlayer(1, false);
             OnBetStandButtonPressed();//press the 'place bet button' for player
