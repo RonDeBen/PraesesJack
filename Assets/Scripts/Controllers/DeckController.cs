@@ -10,14 +10,10 @@ public class DeckController : MonoBehaviour
     public int shoeSize = 3;
     public float muPercent, sigmaPercent;
     private Stack<int> deckInts;
+    private bool shouldShuffle = false;
     // Start is called before the first frame update
     void Start(){
         ShuffleDeck();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     void ChangeCard(CardModel card, int cardNum){
@@ -45,7 +41,7 @@ public class DeckController : MonoBehaviour
         //inserts a "card" in the deck that triggers a shuffle
         //ex muPercent = .75, sigmaPercent = .06 
         //most shuffles will happen 3/4 of the way into the deck
-        //99.7% of shuffles will be between 0.57 and 0.93 of the way into the deck
+        //99.7% of shuffles will be between 0.57% and 0.93% of the way into the deck
         float percentPenetration = Mathf.Clamp(muPercent + (sigmaPercent * Mathy.NextGaussianFloat()), 0.5f, 0.95f);
         int shuffleIndex = (int)((shoeSize * 52) * percentPenetration);
         tempList.Insert(shuffleIndex, -1);//flag at that position
@@ -58,11 +54,18 @@ public class DeckController : MonoBehaviour
         CardModel newCard = go.GetComponent<CardModel>(); 
         int cardNum = deckInts.Pop();
         if(cardNum == -1){
-            ShuffleDeck();
+            shouldShuffle = true;
             cardNum = deckInts.Pop();
         }
         ChangeCard(newCard, cardNum);
         newCard.SetShouldBeConcealed(shouldConceal);
         return newCard;
+    }
+
+    public void ShuffleIfFlagWasDrawn(){
+        if(shouldShuffle){
+            ShuffleDeck();
+            shouldShuffle = false;
+        }
     }
 }

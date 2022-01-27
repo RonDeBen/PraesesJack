@@ -14,6 +14,7 @@ public class HouseController : MonoBehaviour
     private Vector3 offscreen = new Vector3(100f, 100f, 0f);
 
     public void Deal(){
+        deckCont.ShuffleIfFlagWasDrawn();
         houseHand.Clear();
         DealToPlayer(0, false);
         DealToHouse(false);
