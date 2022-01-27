@@ -53,7 +53,7 @@ public class HouseController : MonoBehaviour
     public void CheckInsuranceBet(){
         houseHand.FlipHole();
         houseHand.CalculateValues();
-        betCont.PayOutInsurance(HouseValue() == 21);
+        betCont.PayOutInsurance((HouseValue() == 21) && (houseHand.Count() == 2));
         insuranceObj.transform.position = offscreen;
     }
 
