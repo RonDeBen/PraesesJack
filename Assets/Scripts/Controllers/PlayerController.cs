@@ -73,9 +73,11 @@ public class PlayerController : MonoBehaviour
         if((cardPair[0].value == -1) && (cardPair[0].value == cardPair[1].value)){
             houseCont.DealToPlayer(0, false);
             houseCont.DealToPlayer(1, false);
-            houseCont.DealersTurn(false);
-            DetermineWinner(false);
-            hitMeObjs[0].transform.position = offscreen;
+            OnBetStandButtonPressed();//press the 'place bet button' for player
+            // houseCont.DealersTurn(false);
+            // DetermineWinner(false);
+            // hitMeObjs[0].transform.position = offscreen;
+            // currentHandIndex = -1;
         }
     }
 
@@ -207,9 +209,9 @@ public class PlayerController : MonoBehaviour
 
     public void Busted(bool isDoubleDown){
         if(currentHandIndex == -1){//must use DetermineWinner() on splits
-            FinishedBeforeHouse();
             betCont.LoseBet(false, isDoubleDown);
             textCont.SetOutcomeText("Player Busted");
+            FinishedBeforeHouse();
         }
     }
 

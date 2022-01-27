@@ -82,7 +82,7 @@ SpriteRenderer:
   m_Size: {x: 3.2, y: 4.5306706}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &8236703707734306
@@ -98,8 +98,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sprender: {fileID: 8236703707734309}
-  backSprite: {fileID: 0}
+  backSprite: {fileID: 7161543027025713033, guid: c0ade4078927f4febbd83f868588f66f,
+    type: 3}
+  frontSprite: {fileID: 0}
+  shouldBeConcealed: 1
   value: 0
+  denomination: 0
 --- !u!1 &2223975846104574478
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,6 +184,6 @@ SpriteRenderer:
   m_Size: {x: 3.26, y: 4.570677}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
