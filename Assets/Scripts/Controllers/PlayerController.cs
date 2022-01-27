@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    private List<HandModel> hands = new List<HandModel>();
     public Vector3 playerStartPos, offset, doubleDownOffset, handOffset;
     public HouseController houseCont; 
     public BettingController betCont;
@@ -14,9 +13,13 @@ public class PlayerController : MonoBehaviour
     public Button clearBtn, betStandBtn;
     public GameObject doubleDownObj;
     public List<GameObject> hitMeObjs;
+
+    private List<HandModel> hands = new List<HandModel>();
     private List<Vector3> handPositions = new List<Vector3>();
+
     private RaycastHit2D hit;
     private Vector2 touchPosWorld2D;
+
     private bool placedABet = false;
     private bool isDoublingDown = false;
     private int currentHandIndex = -1;
@@ -54,17 +57,15 @@ public class PlayerController : MonoBehaviour
     }
 
     public void Split(){
-        //makes two separate hands
         currentHandIndex = 0;
         int oldIndex = splitter.handIndex;
         List<CardModel> cardPair = hands[oldIndex].GetCopyOfPair();
 
         hands[oldIndex].Clear();
-        ReceiveCard(cardPair[0], oldIndex, false);
-
-        HandModel newHand = new HandModel();
-        hands.Add(newHand);
-        ReceiveCard(cardPair[1], (handPositions.Count - 1), false);
+        ReceiveCard(cardPair[0], oldIndex, false);//put first card in hand[0]
+        
+        hands.Add(new HandModel());
+        ReceiveCard(cardPair[1], (handPositions.Count - 1), false);//put second card in hand[1]
 
         splitter.gameObject.transform.position = offscreen;
 
@@ -72,6 +73,7 @@ public class PlayerController : MonoBehaviour
         if((cardPair[0].value == -1) && (cardPair[0].value == cardPair[1].value)){
             houseCont.DealToPlayer(0, false);
             houseCont.DealToPlayer(1, false);
+            houseCont.DealersTurn(false);
             DetermineWinner(false);
             hitMeObjs[0].transform.position = offscreen;
         }
@@ -124,7 +126,7 @@ public class PlayerController : MonoBehaviour
         }else{
             hitMeObjs[0].transform.position = offscreen;
             hitMeObjs[1].transform.position = offscreen;
-            houseCont.DealersTurn(isDoubleDown, (currentHandIndex != -1));
+            houseCont.DealersTurn(isDoubleDown);
             clearBtn.interactable = true;
             placedABet = false;
             textCont.SetBetStandText("PLACE BET");
@@ -177,7 +179,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public bool HasABlackJack(int handIndex){
-        return hands[handIndex].HighestValue() == 21;
+        return ((hands[handIndex].HighestValue() == 21) && (hands[handIndex].Count == 2));
     }
 
     public void CheckForDoubleDown(int handIndex){

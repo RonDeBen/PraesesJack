@@ -10,8 +10,8 @@ public class HouseController : MonoBehaviour
     public BettingController betCont;
     public GameObject insuranceObj;
     public Vector3 houseStartPos, offset;
-    // private List<CardModel> houseHand = new List<CardModel>();
     private HandModel houseHand = new HandModel();
+    private Vector3 offscreen = new Vector3(100f, 100f, 0f);
 
     public void Deal(){
         houseHand.Clear();
@@ -37,7 +37,7 @@ public class HouseController : MonoBehaviour
         playerCont.ReceiveCard(deckCont.GetNextCard(false), handIndex, isDoubleDown);
     }
 
-    public void DealersTurn(bool isDoubleDown, bool isSplit){
+    public void DealersTurn(bool isDoubleDown){
         houseHand.FlipHole();
         houseHand.CalculateValues();
         while(houseHand.HighestValue() < 17){
@@ -45,15 +45,15 @@ public class HouseController : MonoBehaviour
             houseHand.CalculateValues();
         }
         playerCont.DetermineWinner(isDoubleDown);
-        betCont.PayOutInsurance(HouseValue() == 21);
-        insuranceObj.transform.position = new Vector3(100f, 100f, 0f);
+        betCont.PayOutInsurance((HouseValue() == 21));
+        insuranceObj.transform.position = offscreen;
     }
 
     public void CheckInsuranceBet(){
         houseHand.FlipHole();
         houseHand.CalculateValues();
         betCont.PayOutInsurance(HouseValue() == 21);
-        insuranceObj.transform.position = new Vector3(100f, 100f, 0f);
+        insuranceObj.transform.position = offscreen;
     }
 
     public int HouseValue(){
