@@ -47,11 +47,6 @@ public class DeckController : MonoBehaviour
         int shuffleIndex = (int)((shoeSize * 52) * percentPenetration);
         tempList.Insert(shuffleIndex, -1);//flag at that position
 
-        tempList.Add(12);
-        tempList.Add(12);
-        tempList.Add(12);
-        tempList.Add(12);
-
         deckInts = new Stack<int>(tempList);
     }
 
