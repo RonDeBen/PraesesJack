@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
                 textCont.ConcatOutcomeText("Player Busted");
             }else if(houseCont.HouseValue() > 21){
                 betCont.WinBet(false, isDoubleDown);
-                textCont.SetOutcomeText("House busted, player wins");
+                textCont.ConcatOutcomeText("House busted, player wins");
             }else if(hand.HighestValue() == houseCont.HouseValue()){
                 textCont.ConcatOutcomeText("It's a tie");
             }else if(hand.HighestValue() > houseCont.HouseValue()){
@@ -162,7 +162,7 @@ public class PlayerController : MonoBehaviour
             GotABlackJack(isDoubleDown);
         }
         CheckForDoubleDown(handIndex);
-        if(hands[handIndex].HasAPair() && hands.Count < 2){
+        if(hands[handIndex].HasAPair() && (hands.Count < 2) && betCont.CanAffordToDoubleDown()){//affording double down is the same as affording splits
             splitter.SetSprite(hands[handIndex].GetCardSprite(1));
             splitter.handIndex = handIndex;
             Vector3 newHandStartPos = handPositions[handIndex] + handOffset;
@@ -201,14 +201,21 @@ public class PlayerController : MonoBehaviour
         if(currentHandIndex == -1){//must use DetermineWinner() on splits
             FinishedBeforeHouse();
             houseCont.CheckForStandOff();
+            hitMeObjs[0].transform.position = offscreen;
         }
     }
 
     public void Busted(bool isDoubleDown){
-        if(currentHandIndex == -1){//must use DetermineWinner() on splits
-            betCont.LoseBet(false, isDoubleDown);
-            textCont.SetOutcomeText("Player Busted");
-            FinishedBeforeHouse();
+        if(currentHandIndex == 0){
+            GoToNextHand();
+        }else{
+            if(currentHandIndex == 1){
+                DetermineWinner(isDoubleDown);
+            }else{
+                betCont.LoseBet(false, isDoubleDown);
+                textCont.SetOutcomeText("Player Busted");
+                FinishedBeforeHouse();
+            }
         }
     }
 
