@@ -22,4 +22,4 @@ If the player's first two cards can add up to 9, 10, or 11 the player is given t
 If the house's face up card is an Ace, the player may wager up to half of their initial bet that the hole is a 10-card. 
 
 ## Splitting
-If the player's first two cards are of the same denomination, the player may click a transparent copy of the second card to start a new hand. The player then plays out the first hand normally, and busting or clicking the "STAND" button will begin the second hand. According to my understanding of the Bicycle rules, they do not allow double downs on splits, and you may not split multiple times.
+If the player's first two cards are of the same denomination, the player may click a transparent copy of the second card to start a second hand. The player then plays out the first hand normally, and busting or clicking the "STAND" button will begin the second hand. According to my understanding of the Bicycle rules, they do not allow double downs on splits, and you may not split multiple times.
