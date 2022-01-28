@@ -7,7 +7,7 @@ https://rondeben.itch.io/praesesjack
 
 A Windows or OS X executable of this game can be sent upon request. 
 
-You may also open up this project in Unity. This may be done by using UnityHub to "Add" the project folder, or by clicking on the Scene file in the Asset folder, with Unity installed. 
+You may also open up this project in Unity. This may be done by using UnityHub to "Add" the project folder, or by clicking on the Scene file in the Asset folder, with Unity installed. I imagine it will work on most versions of Unity, but I used 2020.3.26f1
 
 # Additional Features
 There were some differing opinions on Blackjack rules, so I tried to adhere to those laid out by Bicycle Cards. 
